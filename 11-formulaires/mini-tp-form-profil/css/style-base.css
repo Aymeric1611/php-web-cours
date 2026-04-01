@@ -75,3 +75,17 @@ input:focus{
 .required{
     color: red;
 }
+
+.erreur-message{
+    color: red;
+}
+
+.succes-message{
+    background-color: rgb(98, 255, 135);
+    color: rgb(44, 128, 19);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}

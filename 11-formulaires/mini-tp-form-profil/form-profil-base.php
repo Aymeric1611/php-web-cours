@@ -5,11 +5,14 @@ $statutOptions = [
     "enseigant" => "Enseignant",
     "administratif" => "Administratif"
 ];
+
 //definir une variable par champs du formaulaire
-$pseudi = "";
+$pseudo = "";
 $email = "";
 $statut = "";
 $erreurs = []; //tableau associatif
+$succes = false;
+
 //detecter la soumission du formulaire
 if ($_SERVER["REQUEST_METHOD"] === "POST"){
     //formulaire soumis
@@ -18,12 +21,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST"){
     $email = trim($_POST['email'] ?? '');
     $statut = trim($_POST['statut'] ?? '');
 }
+
 //validation du pseudo
 if ($pseudo === ''){
     //le pseudo n'a pas ete saisi
     $erreurs['pseudo'] = "Le pseudo est obligatoire";
 } elseif (mb_strlen($pseudo)<3){
-    $erreurs['pseudo'] = "Le pseudo doit être d'au minimum de 3 caractère";
+    $erreurs['pseudo'] = "Le pseudo doit contenir au minimum 3 caractères";
+}
+
+//validation de l'email
+if ($email === ''){
+    $erreurs['email'] = "L'email est obligatoire";
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $erreurs['email'] = "L'email doit contenir un seul @, il doit y avoir des caractères avant le @ et il doit y avoir a la fin";
+}
+    
+//validation du statut
+//if ()
+
+//traitement des données saisie
+//uniquement dasn le cas ou il y a aucune erreur de validation
+if (empty($erreurs)){
+    $succes = true;
+    //réinitialsier les variable avec ''
+    $pseudo = '';
+    $email = '';
+    $statut = '';
 }
 ?>
 
@@ -46,7 +70,14 @@ if ($pseudo === ''){
             <hr>
         </header>
 
-        <form action="" method="POST" autocomplete="off">
+        <?php if($succes): ?>
+            <div class="succes-message">Le profil a été créé avec succès !</div>
+        <?php 
+        $succes = false;
+        endif; 
+        ?>
+
+        <form action="" method="POST" autocomplete="off" novalidate>
 
             <!-- PSEUDO -->
             <div class="form-group">
@@ -55,6 +86,7 @@ if ($pseudo === ''){
                     id="pseudo"
                     name="pseudo"
                     placeholder="Ex: FL39"
+                    value="<?= $pseudo ?>"
                     required
                     minlength="3">
                 <?php if (isset($erreurs['pseudo'])) :?>
@@ -70,7 +102,11 @@ if ($pseudo === ''){
                     id="email"
                     name="email"
                     placeholder="votre@email.fr"
+                    value="<?= $email ?>"
                     required>
+                <?php if (isset($erreurs['email'])) :?>
+                    <div class="erreur-message"><?= $erreurs['email'] ?></div>
+                <?php endif; ?>
             </div>
 
             <!-- STATUT -->
